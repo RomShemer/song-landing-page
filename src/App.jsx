@@ -146,6 +146,7 @@ export default function App() {
                 subtitle="לשמיעה והפצה"
                 href={artistData.downloads.mp3}
                 onClick={() => trackSongDownload('mp3')}
+                restricted 
               />
 
               <DownloadCard
@@ -154,6 +155,7 @@ export default function App() {
                 subtitle="איכות מלאה"
                 href={artistData.downloads.wav}
                 onClick={() => trackSongDownload('wav')}
+                restricted 
               />
 
               <DownloadCard
@@ -286,12 +288,31 @@ function AccordionItem({ title, icon: Icon, isOpen, onClick, children }) {
 }
 
 
-function DownloadCard({ title, subtitle, icon: Icon, href, onClick }) {
+function DownloadCard({ title, subtitle, icon: Icon, href, onClick, restricted }) {
+  const isDemo = true;
+
+  const handleClick = (e) => {
+
+    if (!href) {
+      e.preventDefault();
+    }
+    
+    if (isDemo && restricted) {
+      e.preventDefault();
+      alert(
+        "This demo version does not allow file downloads.\nFor rights protection."
+      );
+      return;
+    }
+
+    onClick?.(e);
+  };
+
   return (
     <a
       href={href || '#'}
-      onClick={onClick}
-      download={!!href}
+      onClick={handleClick}
+      download={!isDemo && !!href}
       className="download-card"
     >
       <div className="download-icon"><Icon /></div>
@@ -302,6 +323,7 @@ function DownloadCard({ title, subtitle, icon: Icon, href, onClick }) {
     </a>
   );
 }
+
 
 function Credit({ role, name }) {
   return (
